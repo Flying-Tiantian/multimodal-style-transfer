@@ -251,7 +251,7 @@ class style_transfer_model(ABCModel):
     def forward_pass(self, input_layer, trainable=True):
         with tf.variable_scope(self.name, reuse=tf.AUTO_REUSE) as scope:
             with tf.variable_scope('resize') as scope:
-                image_256 = tf.image.resize_bilinear(input_layer, (256, 256))
+                image_256 = tf.image.resize_images(input_layer, (256, 256))
             
             with tf.variable_scope('style_subnet') as scope:
                 styled = self._style_subnet(image_256, trainable)
