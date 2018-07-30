@@ -276,7 +276,7 @@ class style_transfer_model(ABCModel):
             tf.summary.image('enhanced', enhanced, max_outputs=10)
             tf.summary.image('output', output, max_outputs=10)
 
-        return styled, enhanced, output
+        return output
 
     def _loss(self, input_images, style_image):
         image_512 = input_images
@@ -312,7 +312,7 @@ class style_transfer_model(ABCModel):
 
     def train(self, input_images, style_image):
         with tf.name_scope('train') as scope:
-            self.forward_pass(input_images)
+            output = self.forward_pass(input_images)
             self.total_loss = self._loss(input_images, style_image)
 
         global_step = tf.train.get_global_step()
@@ -324,7 +324,7 @@ class style_transfer_model(ABCModel):
 
     def test(self, input_images):
         with tf.name_scope('test') as scope:
-            output = self.forward_pass(input_images)
+            output = self.forward_pass(input_images, trainable=False)
 
         return output
 
