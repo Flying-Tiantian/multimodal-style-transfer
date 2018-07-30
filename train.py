@@ -76,7 +76,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--style_img',
         type=str,
-        default='1-style.jpg',
+        default='2-style1.jpg',
         help='Style image.')
     parser.add_argument(
         '--train_dir',

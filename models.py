@@ -137,11 +137,11 @@ class style_transfer_model(ABCModel):
                 conv3 = style_conv2d_layer(
                     conv2, 3, 128, 2, self.weight_decay, trainable)
             with tf.variable_scope('block1') as scope:
-                block1 = basic_block(conv3, 0, 1, self.weight_decay, trainable)
+                block1 = basic_block(conv3, 128, 1, self.weight_decay, trainable)
             with tf.variable_scope('block2') as scope:
-                block2 = basic_block(block1, 0, 1, self.weight_decay, trainable)
+                block2 = basic_block(block1, 128, 1, self.weight_decay, trainable)
             with tf.variable_scope('block3') as scope:
-                block3 = basic_block(block2, 0, 1, self.weight_decay, trainable)
+                block3 = basic_block(block2, 128, 1, self.weight_decay, trainable)
 
             return block3
         with tf.variable_scope('rgb_2_gray') as scope:
@@ -157,17 +157,17 @@ class style_transfer_model(ABCModel):
 
         with tf.variable_scope('conv_block') as scope:
             with tf.variable_scope('block1') as scope:
-                block1 = basic_block(combine, 0, 1, self.weight_decay, trainable)
+                block1 = basic_block(combine, 256, 1, self.weight_decay, trainable)
             with tf.variable_scope('block2') as scope:
-                block2 = basic_block(block1, 0, 1, self.weight_decay, trainable)
+                block2 = basic_block(block1, 256, 1, self.weight_decay, trainable)
             with tf.variable_scope('block3') as scope:
-                block3 = basic_block(block2, 0, 1, self.weight_decay, trainable)
+                block3 = basic_block(block2, 256, 1, self.weight_decay, trainable)
             with tf.variable_scope('upsample1') as scope:
                 upsample1 = upsample_conv2d_layer(
-                    block3, 3, 64, self.weight_decay, trainable)
+                    block3, 3, 128, self.weight_decay, trainable)
             with tf.variable_scope('upsample2') as scope:
                 upsample2 = upsample_conv2d_layer(
-                    upsample1, 3, 32, self.weight_decay, trainable)
+                    upsample1, 3, 64, self.weight_decay, trainable)
             with tf.variable_scope('output') as scope:
                 output = style_conv2d_layer(
                     upsample2, 3, 3, 1, self.weight_decay, trainable)
@@ -187,26 +187,26 @@ class style_transfer_model(ABCModel):
             conv4 = style_conv2d_layer(
                 conv3, 3, 256, 2, self.weight_decay, trainable)
         with tf.variable_scope('block1') as scope:
-            block1 = basic_block(conv4, 0, 1, self.weight_decay, trainable)
+            block1 = basic_block(conv4, 256, 1, self.weight_decay, trainable)
         with tf.variable_scope('block2') as scope:
-            block2 = basic_block(block1, 0, 1, self.weight_decay, trainable)
+            block2 = basic_block(block1, 256, 1, self.weight_decay, trainable)
         with tf.variable_scope('block3') as scope:
-            block3 = basic_block(block2, 0, 1, self.weight_decay, trainable)
+            block3 = basic_block(block2, 256, 1, self.weight_decay, trainable)
         with tf.variable_scope('block4') as scope:
-            block4 = basic_block(block3, 0, 1, self.weight_decay, trainable)
+            block4 = basic_block(block3, 256, 1, self.weight_decay, trainable)
         with tf.variable_scope('block5') as scope:
-            block5 = basic_block(block4, 0, 1, self.weight_decay, trainable)
+            block5 = basic_block(block4, 256, 1, self.weight_decay, trainable)
         with tf.variable_scope('block6') as scope:
-            block6 = basic_block(block5, 0, 1, self.weight_decay, trainable)
+            block6 = basic_block(block5, 256, 1, self.weight_decay, trainable)
         with tf.variable_scope('upsample1') as scope:
             upsample1 = upsample_conv2d_layer(
-                block6, 3, 0, self.weight_decay, trainable)
+                block6, 3, 128, self.weight_decay, trainable)
         with tf.variable_scope('upsample2') as scope:
             upsample2 = upsample_conv2d_layer(
-                upsample1, 3, 0, self.weight_decay, trainable)
+                upsample1, 3, 64, self.weight_decay, trainable)
         with tf.variable_scope('upsample3') as scope:
             upsample3 = upsample_conv2d_layer(
-                upsample2, 3, 0, self.weight_decay, trainable)
+                upsample2, 3, 32, self.weight_decay, trainable)
         with tf.variable_scope('output') as scope:
             output = style_conv2d_layer(
                     upsample3, 3, 3, 1, self.weight_decay, trainable)
@@ -224,17 +224,17 @@ class style_transfer_model(ABCModel):
             conv3 = style_conv2d_layer(
                 conv2, 3, 128, 2, self.weight_decay, trainable)
         with tf.variable_scope('block1') as scope:
-            block1 = basic_block(conv3, 3, 1, self.weight_decay, trainable)
+            block1 = basic_block(conv3, 128, 1, self.weight_decay, trainable)
         with tf.variable_scope('block2') as scope:
-            block2 = basic_block(block1, 3, 1, self.weight_decay, trainable)
+            block2 = basic_block(block1, 128, 1, self.weight_decay, trainable)
         with tf.variable_scope('block3') as scope:
-            block3 = basic_block(block2, 3, 1, self.weight_decay, trainable)
+            block3 = basic_block(block2, 128, 1, self.weight_decay, trainable)
         with tf.variable_scope('upsample1') as scope:
             upsample1 = upsample_conv2d_layer(
-                block3, 3, 0, self.weight_decay, trainable)
+                block3, 3, 64, self.weight_decay, trainable)
         with tf.variable_scope('upsample2') as scope:
             upsample2 = upsample_conv2d_layer(
-                upsample1, 3, 0, self.weight_decay, trainable)
+                upsample1, 3, 32, self.weight_decay, trainable)
         with tf.variable_scope('output') as scope:
             output = style_conv2d_layer(
                 upsample2, 3, 3, 1, self.weight_decay, trainable)

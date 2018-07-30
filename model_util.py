@@ -141,8 +141,6 @@ def conv2d_layer(input_layer, kernel_size, out_channels, stride, wd, trainable, 
 
 def style_conv2d_layer(input_layer, kernel_size, out_channels, stride, wd, trainable):
     in_channels = input_layer.get_shape().as_list()[-1]
-    if out_channels == 0:
-        out_channels = in_channels * stride
     
     kernel = variable_with_weight_decay(name='kernel', shape=(kernel_size, kernel_size, in_channels, out_channels), wd=wd, initializer=None, trainable=trainable)
     conv_layer = tf.nn.conv2d(input_layer, kernel, strides=(1, stride, stride, 1), padding='SAME')
@@ -177,8 +175,6 @@ def downsample_layer(input_layer):
 
 def upsample_conv2d_layer(input_layer, kernel_size, out_channels, wd, trainable):
     shape = input_layer.get_shape().as_list()
-    if out_channels == 0:
-        out_channels = int(shape[-1] / 2)
 
     resized = tf.image.resize_images(input_layer, (shape[1]*2, shape[2]*2), tf.image.ResizeMethod.NEAREST_NEIGHBOR)
     conv_layer = conv2d_layer(resized, kernel_size, out_channels, 1, wd, trainable)
@@ -206,8 +202,6 @@ def vgg_conv2d_layer(input_layer, kernel_size, out_channels, stride, wd, trainab
 
 def basic_block(input_layer, out_channels, stride, wd, trainable):
     in_channels = input_layer.get_shape().as_list()[-1]
-    if out_channels == 0:
-        out_channels = in_channels
 
     with tf.variable_scope('conv1') as scope:
         x = conv2d_layer(input_layer, 3, out_channels, stride, wd, trainable)
