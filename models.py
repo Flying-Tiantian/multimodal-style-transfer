@@ -282,8 +282,10 @@ class style_transfer_model(ABCModel):
 
     def _loss(self, input_images, style_image):
         style_image_512 = style_image
-        with tf.name_scope('downsample') as scope:
-            style_image_256 = downsample_layer(style_image_512)
+        content_image_512 = input_images
+
+        style_image_256 = downsample_layer(style_image_512)
+        content_image_256 = downsample_layer(content_image_512)
 
         with tf.name_scope('style_loss_styled') as scope:
             style_loss1 = self.loss_model.style_loss(style_image_256, self._styled)
@@ -292,8 +294,14 @@ class style_transfer_model(ABCModel):
         with tf.name_scope('style_loss_output') as scope:
             style_loss3 = self.loss_model.style_loss(style_image_512, self._output)
 
-        with tf.name_scope('content_loss') as scope:
-            content_loss = self.loss_model.content_loss(input_images, self._output)
+        with tf.name_scope('content_loss1') as scope:
+            content_loss1 = self.loss_model.content_loss(content_image_256, self._styled)
+        with tf.name_scope('content_loss2') as scope:
+            content_loss2 = self.loss_model.content_loss(content_image_512, self._enhanced)
+        with tf.name_scope('content_loss3') as scope:
+            content_loss3 = self.loss_model.content_loss(content_image_512, self._output)
+
+        total_content_loss = tf.add_n([content_loss1, content_loss2, content_loss3], name='total_content_loss')
 
         l2_loss = tf.add_n(tf.get_collection(
             tf.GraphKeys.REGULARIZATION_LOSSES), name='l2_loss')
@@ -302,13 +310,16 @@ class style_transfer_model(ABCModel):
                                         1, 0.5, 0.25], name='total_style_loss')
 
         total_loss = tf.add_n(
-            [total_style_loss, content_loss, l2_loss], name='total_loss')
+            [total_style_loss, total_content_loss, l2_loss], name='total_loss')
 
         tf.summary.scalar('style_loss1', style_loss1)
         tf.summary.scalar('style_loss2', style_loss2)
         tf.summary.scalar('style_loss3', style_loss3)
-        tf.summary.scalar('content_loss', content_loss)
+        tf.summary.scalar('content_loss1', content_loss1)
+        tf.summary.scalar('content_loss2', content_loss2)
+        tf.summary.scalar('content_loss3', content_loss3)
         tf.summary.scalar('l2_loss', l2_loss)
+        tf.summary.scalar('total_loss', total_loss)
 
         return total_loss
 
