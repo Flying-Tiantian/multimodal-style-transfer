@@ -91,7 +91,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--batch_size',
         type=int,
-        default=1,
+        default=4,
         help='Batch size.')
     parser.add_argument(
         '--save_checkpoint_interval',

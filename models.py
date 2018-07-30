@@ -281,19 +281,19 @@ class style_transfer_model(ABCModel):
         return output
 
     def _loss(self, input_images, style_image):
-        image_512 = input_images
+        style_image_512 = style_image
         with tf.name_scope('downsample') as scope:
-            image_256 = downsample_layer(image_512)
+            style_image_256 = downsample_layer(style_image_512)
 
         with tf.name_scope('style_loss_styled') as scope:
-            style_loss1 = self.loss_model.style_loss(image_256, self._styled)
+            style_loss1 = self.loss_model.style_loss(style_image_256, self._styled)
         with tf.name_scope('style_loss_enhanced') as scope:
-            style_loss2 = self.loss_model.style_loss(image_512, self._enhanced)
+            style_loss2 = self.loss_model.style_loss(style_image_512, self._enhanced)
         with tf.name_scope('style_loss_output') as scope:
-            style_loss3 = self.loss_model.style_loss(image_512, self._output)
+            style_loss3 = self.loss_model.style_loss(style_image_512, self._output)
 
         with tf.name_scope('content_loss') as scope:
-            content_loss = self.loss_model.content_loss(image_512, self._output)
+            content_loss = self.loss_model.content_loss(input_images, self._output)
 
         l2_loss = tf.add_n(tf.get_collection(
             tf.GraphKeys.REGULARIZATION_LOSSES), name='l2_loss')
