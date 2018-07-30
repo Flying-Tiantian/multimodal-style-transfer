@@ -25,9 +25,9 @@ def train():
     else:
         tf.gfile.MakeDirs(FLAGS.train_dir)
 
-    style_img = reader.read_one_img(FLAGS.style_img, FLAGS.batch_size)
-
     with tf.Graph().as_default():
+        style_img = reader.read_one_img(FLAGS.style_img, FLAGS.batch_size)
+
         global_step = tf.train.get_or_create_global_step()
 
         train_op, loss_op = model.train(reader.input(FLAGS.batch_size), style_img)
