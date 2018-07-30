@@ -76,7 +76,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--style_img',
         type=str,
-        default='2-style1.jpg',
+        default='2-style2.jpg',
         help='Style image.')
     parser.add_argument(
         '--train_dir',
@@ -91,7 +91,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--batch_size',
         type=int,
-        default=4,
+        default=1,
         help='Batch size.')
     parser.add_argument(
         '--save_checkpoint_interval',

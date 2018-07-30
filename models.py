@@ -310,7 +310,7 @@ class style_transfer_model(ABCModel):
                                         1, 0.5, 0.25], name='total_style_loss')
 
         total_loss = tf.add_n(
-            [total_style_loss, total_content_loss, l2_loss], name='total_loss')
+            [total_style_loss, total_content_loss], name='total_loss')
 
         tf.summary.scalar('style_loss1', style_loss1)
         tf.summary.scalar('style_loss2', style_loss2)
@@ -321,6 +321,8 @@ class style_transfer_model(ABCModel):
         tf.summary.scalar('l2_loss', l2_loss)
         tf.summary.scalar('total_loss', total_loss)
 
+        tf.summary.image('style_image', style_image, max_outputs=10)
+
         return total_loss
 
     def train(self, input_images, style_image):
@@ -330,7 +332,15 @@ class style_transfer_model(ABCModel):
 
         global_step = tf.train.get_global_step()
 
-        opt = tf.train.AdamOptimizer()
+        lr = tf.train.exponential_decay(
+            0.001,
+            global_step,
+            2000,
+            0.8,
+            staircase=True)
+        tf.summary.scalar('learning_rate', lr)
+
+        opt = tf.train.AdamOptimizer(learning_rate=lr)
         train_op = opt.minimize(self.total_loss, global_step)
 
         return train_op, self.total_loss
@@ -355,9 +365,10 @@ class vgg_16_model(ABCModel):
 
     def _gram_matrices(self, feature):
         shape = feature.get_shape()
-        nlc = tf.reshape(feature, (shape[0], -1, shape[3]))
+        nlc = tf.reshape(feature, (shape[0], -1, shape[-1]))
         ncl = tf.transpose(nlc, [0, 2, 1])
-        gm = tf.div(tf.matmul(ncl, nlc), (shape[1] * shape[2] * shape[3]).value)
+        # gm = tf.div(tf.matmul(ncl, nlc), (shape[1] * shape[2] * shape[3]).value)
+        gm = tf.matmul(ncl, nlc)
 
         return gm
 
@@ -429,25 +440,26 @@ class vgg_16_model(ABCModel):
 
         return [gm1, gm2, gm3, gm4], conv4_2
 
-    def style_loss(self, input_layer1, input_layer2, weights=[0.2, 0.2, 0.2, 0.2, 0.2]):
+    def style_loss(self, input_layer1, input_layer2, weights=[0.25, 0.25, 0.25, 0.25]):
         gms1, _ = self.forward_pass(input_layer1, trainable=False)
         gms2, _ = self.forward_pass(input_layer2, trainable=False)
 
         losses = []
 
         for gm1, gm2, weight in zip(gms1, gms2, weights):
-            style_loss = tf.reduce_mean(tf.square(gm1 - gm2))
+            # style_loss = tf.reduce_mean(tf.square(gm1 - gm2))
+            style_loss = tf.reduce_sum(tf.square(gm1 - gm2))
             style_loss = tf.multiply(
                 style_loss, tf.constant(weight, dtype=tf.float32))
             losses.append(style_loss)
 
-        return tf.multiply(tf.add_n(losses, name='style_loss'), 10000)
+        return tf.add_n(losses, name='style_loss')  # tf.multiply(tf.add_n(losses, name='style_loss'), 10000)
 
     def content_loss(self, input_layer1, input_layer2):
         _, content1 = self.forward_pass(input_layer1, trainable=False)
         _, content2 = self.forward_pass(input_layer2, trainable=False)
 
-        content_loss = tf.reduce_mean(
+        content_loss = tf.reduce_sum(
             tf.square(content1 - content2), name='content_loss')
 
         return content_loss
