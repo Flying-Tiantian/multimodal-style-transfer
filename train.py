@@ -86,7 +86,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--max_steps',
         type=int,
-        default=10000,
+        default=50000,
         help='Number of batches to run.')
     parser.add_argument(
         '--batch_size',
