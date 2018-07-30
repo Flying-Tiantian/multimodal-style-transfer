@@ -106,6 +106,8 @@ class ABCModel(object):
                 global_step = int(global_step)
             except ValueError:
                 global_step = 0
+            
+            print('Complete.')
             return global_step
 
         else:
