@@ -352,7 +352,8 @@ class style_transfer_model(ABCModel):
         return output
 
     def restore(self, sess, train_dir, vgg_16_ckpt):
-        self.loss_model.restore(sess, vgg_16_ckpt)
+        if vgg_16_ckpt is not None:
+            self.loss_model.restore(sess, vgg_16_ckpt)
         if train_dir is not None:
             super().restore(sess, train_dir)
 
@@ -453,7 +454,7 @@ class vgg_16_model(ABCModel):
                 style_loss, tf.constant(weight, dtype=tf.float32))
             losses.append(style_loss)
 
-        return tf.multiply(tf.add_n(losses, name='style_loss'), 5e-6)
+        return tf.multiply(tf.add_n(losses, name='style_loss'), 2e-7)
 
     def content_loss(self, input_layer1, input_layer2):
         _, content1 = self.forward_pass(input_layer1, trainable=False)
