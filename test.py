@@ -29,7 +29,9 @@ def test():
             dtype=tf.float32, shape=(1, 512, 512, 3))
         output_op = model.test(input_placeholder)
 
-        with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
+        config = tf.ConfigProto(log_device_placement=False)
+        config.gpu_options.allow_growth = True  # pylint: disable=no-member
+        with tf.Session(config=config) as sess:
 
             print('Init all variables...')
             sess.run(tf.global_variables_initializer())
