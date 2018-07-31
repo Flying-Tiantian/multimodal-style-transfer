@@ -31,9 +31,9 @@ def test():
 
         with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
 
-            '''print('Init all variables...')
+            print('Init all variables...')
             sess.run(tf.global_variables_initializer())
-            print('Complete.')'''
+            print('Complete.')
 
             print('Restore.')
             model.restore(sess, os.path.join(
