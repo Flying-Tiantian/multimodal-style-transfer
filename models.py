@@ -453,7 +453,7 @@ class vgg_16_model(ABCModel):
                 style_loss, tf.constant(weight, dtype=tf.float32))
             losses.append(style_loss)
 
-        return tf.add_n(losses, name='style_loss')  # tf.multiply(tf.add_n(losses, name='style_loss'), 10000)
+        return tf.multiply(tf.add_n(losses, name='style_loss'), e-6)
 
     def content_loss(self, input_layer1, input_layer2):
         _, content1 = self.forward_pass(input_layer1, trainable=False)
