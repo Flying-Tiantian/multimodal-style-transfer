@@ -14,13 +14,13 @@ FLAGS = None
 MODEL_DIR = './data/train/'
 
 
-def train():
+def test():
     reader = input_generator(FLAGS.data_path)
 
     model = models.style_transfer_model()
 
     if not tf.gfile.Exists(FLAGS.output_path):
-        tf.gfile.DeleteRecursively(FLAGS.output_path)
+        tf.gfile.MakeDirs(FLAGS.train_dir)
 
     file_names = os.listdir(FLAGS.data_path)
 
@@ -50,7 +50,7 @@ def train():
 
 
 def main(argv=None):  # pylint: disable=unused-argument
-    train()
+    test()
 
 
 if __name__ == '__main__':
