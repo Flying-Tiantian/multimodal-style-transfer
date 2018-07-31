@@ -43,8 +43,8 @@ def test():
             print('Complete.')
 
             for file_name in file_names:
-                input_image = reader.read_one_img(
-                    os.path.join(FLAGS.data_path, file_name), 1)
+                input_image = sess.run(reader.read_one_img(
+                    os.path.join(FLAGS.data_path, file_name), 1))
                 output_image = sess.run(output_op, feed_dict={
                                         input_placeholder: input_image})
                 cv2.imwrite(os.path.join(FLAGS.output_path,
