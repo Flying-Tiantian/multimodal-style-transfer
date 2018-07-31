@@ -25,9 +25,9 @@ def test():
     file_names = os.listdir(FLAGS.data_path)
 
     with tf.Graph().as_default():
-        input_placeholder = tf.placeholder(
-            dtype=tf.float32, shape=(1, 512, 512, 3))
-        output_op = model.test(input_placeholder)
+        filename_placeholder = tf.placeholder(dtype=tf.string)
+        input_image = reader.read_one_img(filename_placeholder, 1)
+        output_op = model.test(input_image)
 
         config = tf.ConfigProto(log_device_placement=False)
         config.gpu_options.allow_growth = True  # pylint: disable=no-member
@@ -43,10 +43,8 @@ def test():
             print('Complete.')
 
             for file_name in file_names:
-                input_image = sess.run(reader.read_one_img(
-                    os.path.join(FLAGS.data_path, file_name), 1))
                 output_image = sess.run(output_op, feed_dict={
-                                        input_placeholder: input_image})
+                                        filename_placeholder: os.path.join(FLAGS.data_path, file_name)})
                 cv2.imwrite(os.path.join(FLAGS.output_path,
                                          file_name), np.squeeze(output_image))
 
