@@ -20,7 +20,7 @@ def test():
     model = models.style_transfer_model()
 
     if not tf.gfile.Exists(FLAGS.output_path):
-        tf.gfile.MakeDirs(FLAGS.train_dir)
+        tf.gfile.MakeDirs(FLAGS.output_path)
 
     file_names = os.listdir(FLAGS.data_path)
 
