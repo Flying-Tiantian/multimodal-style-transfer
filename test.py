@@ -27,7 +27,7 @@ def test():
     with tf.Graph().as_default():
         filename_placeholder = tf.placeholder(dtype=tf.string)
         input_image = reader.read_one_img(filename_placeholder, 1)
-        output_op = model.test(input_image)
+        output_op = tf.image.convert_image_dtype(model.test(input_image), dtype=tf.uint8)
 
         config = tf.ConfigProto(log_device_placement=False)
         config.gpu_options.allow_growth = True  # pylint: disable=no-member
@@ -45,6 +45,7 @@ def test():
             for file_name in file_names:
                 output_image = sess.run(output_op, feed_dict={
                                         filename_placeholder: os.path.join(FLAGS.data_path, file_name)})
+                output_image = cv2.cvtColor(output_image, cv2.COLOR_RGB2BGR)
                 cv2.imwrite(os.path.join(FLAGS.output_path,
                                          file_name), np.squeeze(output_image))
 
